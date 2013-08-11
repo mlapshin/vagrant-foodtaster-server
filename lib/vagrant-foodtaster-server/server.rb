@@ -38,25 +38,31 @@ class VagrantFoodtasterServer
       @env.machine_names.include?(vm_name)
     end
 
-    def run_chef_on_vm(vm_name, chef_config)
+    def run_chef_on_vm(vm_name, current_run_config)
       vm = get_vm(vm_name)
-      @env.ui.info "[FT] Running chef on #{vm_name}"
-
       chef_solo_config = vm.config.vm.provisioners.find { |p| p.name == :chef_solo }
-      klass  = Vagrant.plugin("2").manager.provisioners[:chef_solo]
-      provisioner = klass.new(vm, chef_solo_config.config)
 
-      modified_config = vm.config.dup
+      unless chef_solo_config
+        raise RuntimeError, <<-EOT
+          VM '#{vm_name}' doesn't have a configured chef-solo provisioner, which is requied by Foodtaster to run specs on this VM.
+          Please, add dummy chef-solo provisioner to your Vagrantfile, like this:
 
-      puts chef_config.inspect
-      chef_config[:recipes].each { |r| modified_config.vm.provisioners[0].config.add_recipe(r) }
-      puts modified_config.run_list.inspect
+          config.vm.provision :chef_solo do |chef|
+            chef.cookbooks_path = %w[site-cookbooks]
+          end
+        EOT
+      end
 
-      provisioner.configure(modified_config)
+      provisioner_klass = Vagrant.plugin("2").manager.provisioners[:chef_solo]
+      provisioner = provisioner_klass.new(vm, chef_solo_config.config)
+
+      current_run_chef_solo_config = apply_current_run_config(vm.config, current_run_config)
+      provisioner.configure(current_run_chef_solo_config)
+
       provisioner.provision
     end
 
-    def execute_on_vm(vm_name, command)
+    def execute_command_on_vm(vm_name, command)
       vm = get_vm(vm_name)
       exec_result = {}
 
@@ -71,6 +77,14 @@ class VagrantFoodtasterServer
 
     def get_vm(vm_name)
       @env.machine(vm_name, :virtualbox)
+    end
+
+    def apply_current_run_config(vm_config, current_run_config)
+      modified_config = vm_config.dup
+      modified_config.vm.provisioners[0].config.run_list = current_run_config[:run_list]
+      modified_config.vm.provisioners[0].config.json = current_run_config[:json]
+
+      modified_config
     end
   end
 end
