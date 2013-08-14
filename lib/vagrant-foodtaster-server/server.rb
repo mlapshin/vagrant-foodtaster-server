@@ -13,8 +13,6 @@ class VagrantFoodtasterServer
     end
 
     def prepare_vm(vm_name)
-      @env.ui.info "[FT] Preparing #{vm_name}"
-
       vm = get_vm(vm_name)
 
       if vm.state.id.to_s != 'running'
@@ -22,7 +20,6 @@ class VagrantFoodtasterServer
       end
 
       unless @sahara.is_snapshot_mode_on?(vm)
-        @env.ui.info "[FT] making initial snapshot of #{vm_name}"
         @sahara.on(vm)
       end
     end
