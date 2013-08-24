@@ -30,6 +30,12 @@ class VagrantFoodtasterServer
       @sahara.rollback(vm)
     end
 
+    def shutdown_vm(vm_name)
+      vm = get_vm(vm_name)
+
+      vm.action(:halt)
+    end
+
     def vm_defined?(vm_name)
       @env.machine_names.include?(vm_name)
     end
