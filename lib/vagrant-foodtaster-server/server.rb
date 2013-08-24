@@ -26,7 +26,6 @@ class VagrantFoodtasterServer
 
     def rollback_vm(vm_name)
       vm = get_vm(vm_name)
-      @env.ui.info "[FT] rollback #{vm_name}"
 
       @sahara.rollback(vm)
     end
