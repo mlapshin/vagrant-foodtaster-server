@@ -1,6 +1,6 @@
 # Vagrant Foodtaster Server
 
-(Foodtaster)[http://github.com/mlapshin/foodtaster] is a tool for
+[Foodtaster](http://github.com/mlapshin/foodtaster) is a tool for
 testing Chef cookbooks using RSpec and Vagrant. This Vagrant plugin
 allows Foodtaster to interact with Vagrant via simple DRb protocol.
 
