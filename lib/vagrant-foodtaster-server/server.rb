@@ -16,7 +16,9 @@ class VagrantFoodtasterServer
       vm = get_vm(vm_name)
 
       if vm.state.id.to_s != 'running'
-        vm.action(:up, provision_enabled: false)
+        vm.action(:up,
+                  provision_types: [:shell, :puppet],
+                  provision_enabled: true)
       end
 
       unless @sahara.is_snapshot_mode_on?(vm)
