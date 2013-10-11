@@ -1,10 +1,12 @@
+require 'sahara'
+
 class VagrantFoodtasterServer
   class Server
     def initialize(app, env)
       @env = env
       @app = app
 
-      @sahara = Sahara::Session::Command.new(@app, @env)
+      @sahara = ::Sahara::Session::Command.new(@app, @env)
     end
 
     def redirect_stdstreams(stdout, stderr)
