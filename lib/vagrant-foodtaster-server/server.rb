@@ -18,8 +18,15 @@ class VagrantFoodtasterServer
       vm = get_vm(vm_name)
 
       if vm.state.id.to_s != 'running'
+        chef_run_list = get_chef_solo_run_list(vm)
+        provision_types = [:shell, :puppet]
+
+        unless chef_run_list.empty?
+          provision_types << :chef_solo
+        end
+
         vm.action(:up,
-                  provision_types: [:shell, :puppet],
+                  provision_types: provision_types,
                   provision_enabled: true)
       end
 
@@ -80,6 +87,10 @@ class VagrantFoodtasterServer
     end
 
     private
+
+    def get_chef_solo_run_list(vm)
+      vm.config.vm.provision(:chef_solo).map { |c| c.config.run_list }.flatten rescue []
+    end
 
     def get_vm(vm_name)
       @env.machine(vm_name, :virtualbox)
