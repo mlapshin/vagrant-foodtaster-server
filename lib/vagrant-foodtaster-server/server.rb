@@ -89,7 +89,13 @@ class VagrantFoodtasterServer
     private
 
     def get_chef_solo_run_list(vm)
-      vm.config.vm.provision(:chef_solo).map { |c| c.config.run_list }.flatten rescue []
+      vm.config.vm.provisioners.map do |c|
+        if c.name == :chef_solo
+          c.config.run_list
+        else
+          nil
+        end
+      end.compact.flatten
     end
 
     def get_vm(vm_name)
@@ -98,8 +104,13 @@ class VagrantFoodtasterServer
 
     def apply_current_run_config(vm_config, current_run_config)
       modified_config = vm_config.dup
-      modified_config.vm.provisioners[0].config.run_list = current_run_config[:run_list]
-      modified_config.vm.provisioners[0].config.json = current_run_config[:json]
+
+      provisioner_index = modified_config.vm.provisioners.find_index do |prov|
+        prov.name == :chef_solo
+      end
+
+      modified_config.vm.provisioners[provisioner_index].config.run_list = current_run_config[:run_list]
+      modified_config.vm.provisioners[provisioner_index].config.json = current_run_config[:json]
 
       modified_config
     end
