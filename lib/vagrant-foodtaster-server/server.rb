@@ -1,12 +1,10 @@
-require 'sahara'
+require 'sahara/session/virtualbox'
 
 class VagrantFoodtasterServer
   class Server
     def initialize(app, env)
       @env = env
       @app = app
-
-      @sahara = ::Sahara::Session::Command.new(@app, @env)
     end
 
     def redirect_stdstreams(stdout, stderr)
@@ -30,15 +28,16 @@ class VagrantFoodtasterServer
                   provision_enabled: true)
       end
 
-      unless @sahara.is_snapshot_mode_on?(vm)
-        @sahara.on(vm)
+      sahara = sahara_for(vm)
+      unless sahara.is_snapshot_mode_on?
+        sahara.on
       end
     end
 
     def rollback_vm(vm_name)
       vm = get_vm(vm_name)
 
-      @sahara.rollback(vm)
+      sahara_for(vm).rollback
     end
 
     def shutdown_vm(vm_name)
@@ -87,6 +86,10 @@ class VagrantFoodtasterServer
     end
 
     private
+
+    def sahara_for(vm)
+      Sahara::Session::Virtualbox.new(vm)
+    end
 
     def get_chef_solo_run_list(vm)
       vm.config.vm.provisioners.map do |c|
