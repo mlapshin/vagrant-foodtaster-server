@@ -15,8 +15,6 @@ class VagrantFoodtasterServer
           $ vagrant plugin install sahara
         EOT
       end
-
-      @sahara = ::Sahara::Session::Command.new(@app, @env)
     end
 
     def redirect_stdstreams(stdout, stderr)
