@@ -1,10 +1,20 @@
-require 'sahara/session/virtualbox'
-
 class VagrantFoodtasterServer
   class Server
     def initialize(app, env)
       @env = env
       @app = app
+
+      begin
+        require 'sahara/session/virtualbox'
+      rescue LoadError => e
+        raise RuntimeError, <<-EOT
+          Cannot find `sahara' plugin. Please, make sure that `sahara' plugin is installed using command:
+          $ vagrant plugin list
+
+          If `sahara' plugin is not installed, install it using command:
+          $ vagrant plugin install sahara
+        EOT
+      end
     end
 
     def redirect_stdstreams(stdout, stderr)
@@ -29,9 +39,12 @@ class VagrantFoodtasterServer
       end
 
       sahara = sahara_for(vm)
+
       unless sahara.is_snapshot_mode_on?
         sahara.on
       end
+    rescue Exception => e
+      raise RuntimeError, e.message
     end
 
     def rollback_vm(vm_name)
