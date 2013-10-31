@@ -8,11 +8,11 @@ class VagrantFoodtasterServer
         require 'sahara/session/virtualbox'
       rescue LoadError => e
         raise RuntimeError, <<-EOT
-          Cannot find `sahara' plugin. Please, make sure that `sahara' plugin is installed using command:
-          $ vagrant plugin list
+Cannot find `sahara' plugin. Please, make sure that `sahara' plugin is installed using command:
+$ vagrant plugin list
 
-          If `sahara' plugin is not installed, install it using command:
-          $ vagrant plugin install sahara
+If `sahara' plugin is not installed, install it using command:
+$ vagrant plugin install sahara
         EOT
       end
     end
