@@ -43,8 +43,6 @@ $ vagrant plugin install sahara
       unless sahara.is_snapshot_mode_on?
         sahara.on
       end
-    rescue Exception => e
-      raise RuntimeError, e.message
     end
 
     def rollback_vm(vm_name)
@@ -71,7 +69,6 @@ $ vagrant plugin install sahara
         raise RuntimeError, <<-EOT
           VM '#{vm_name}' doesn't have a configured chef-solo provisioner, which is requied by Foodtaster to run specs on this VM.
           Please, add dummy chef-solo provisioner to your Vagrantfile, like this:
-
           config.vm.provision :chef_solo do |chef|
             chef.cookbooks_path = %w[site-cookbooks]
           end
@@ -84,7 +81,11 @@ $ vagrant plugin install sahara
       current_run_chef_solo_config = apply_current_run_config(vm.config, current_run_config)
       provisioner.configure(current_run_chef_solo_config)
 
-      provisioner.provision
+      begin
+        provisioner.provision
+      rescue Exception
+        raise RuntimeError, "Chef run failed!"
+      end
     end
 
     def execute_command_on_vm(vm_name, command)
