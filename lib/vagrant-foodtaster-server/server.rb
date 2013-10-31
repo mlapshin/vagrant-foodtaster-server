@@ -63,17 +63,10 @@ $ vagrant plugin install sahara
 
     def run_chef_on_vm(vm_name, current_run_config)
       vm = get_vm(vm_name)
-      chef_solo_config = vm.config.vm.provisioners.find { |p| p.name == :chef_solo }
 
-      unless chef_solo_config
-        raise RuntimeError, <<-EOT
-          VM '#{vm_name}' doesn't have a configured chef-solo provisioner, which is requied by Foodtaster to run specs on this VM.
-          Please, add dummy chef-solo provisioner to your Vagrantfile, like this:
-          config.vm.provision :chef_solo do |chef|
-            chef.cookbooks_path = %w[site-cookbooks]
-          end
-        EOT
-      end
+      validate_vm!(vm)
+
+      chef_solo_config = vm.config.vm.provisioners.find { |p| p.name == :chef_solo }
 
       provisioner_klass = Vagrant.plugin("2").manager.provisioners[:chef_solo]
       provisioner = provisioner_klass.new(vm, chef_solo_config.config)
@@ -117,6 +110,20 @@ $ vagrant plugin install sahara
 
     def get_vm(vm_name)
       @env.machine(vm_name, :virtualbox)
+    end
+
+    def validate_vm!(vm)
+      chef_solo_config = vm.config.vm.provisioners.find { |p| p.name == :chef_solo }
+
+      unless chef_solo_config
+        raise RuntimeError, <<-EOT
+VM '#{vm.name}' doesn't have a configured chef-solo provisioner, which is requied by Foodtaster to run specs on this VM.
+Please, add dummy chef-solo provisioner to your Vagrantfile, like this:
+config.vm.provision :chef_solo do |chef|
+  chef.cookbooks_path = %w[site-cookbooks]
+end
+        EOT
+      end
     end
 
     def apply_current_run_config(vm_config, current_run_config)
