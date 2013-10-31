@@ -11,6 +11,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{A Foodtaster DRb server.}
   gem.summary       = %q{Foodtaster is a tool for testing Chef cookbooks using RSpec and Vagrant. This plugin allows Foodtaster to interact with Vagrant via simple DRb protocol. }
   gem.homepage      = ""
+  gem.license       = 'MIT'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
