@@ -15,8 +15,6 @@ class VagrantFoodtasterServer
           $ vagrant plugin install sahara
         EOT
       end
-
-      $stderr.puts "HELLO FROM STDERR"
     end
 
     def redirect_stdstreams(stdout, stderr)

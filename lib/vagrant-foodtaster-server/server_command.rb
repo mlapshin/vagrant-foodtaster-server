@@ -10,11 +10,17 @@ class VagrantFoodtasterServer
       DRb.start_service "druby://localhost:#{port_number}", VagrantFoodtasterServer::Server.new(@app, @env)
       DRb.thread.join
 
-    rescue RuntimeError => e
-      error = "#{e.message}\n\nServer Error Backtrace:\n  #{e.backtrace.join("\n  ")}"
-      @env.ui.error(error)
+    rescue RuntimeError, Errno::EADDRINUSE => e
+      write_formatted_exception_message(e)
     rescue Interrupt
       DRb.stop_service
+    end
+
+    private
+
+    def write_formatted_exception_message(e)
+      error = "#{e.message}\n\nServer Error Backtrace:\n  #{e.backtrace.join("\n  ")}"
+      @env.ui.error(error)
     end
   end
 end
