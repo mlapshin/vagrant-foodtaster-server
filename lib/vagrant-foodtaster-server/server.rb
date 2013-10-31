@@ -6,15 +6,17 @@ class VagrantFoodtasterServer
 
       begin
         require 'sahara/session/virtualbox'
-      rescue LoadError => e
-        raise RuntimeError, <<-EOT
-Cannot find `sahara' plugin. Please, make sure that `sahara' plugin is installed using command:
-$ vagrant plugin list
+      rescue LoadError
+        raise RuntimeError, <<-EOT.strip_heredoc
+          Cannot find `sahara' plugin. Please, make sure that `sahara' plugin is installed using command:
+          $ vagrant plugin list
 
-If `sahara' plugin is not installed, install it using command:
-$ vagrant plugin install sahara
+          If `sahara' plugin is not installed, install it:
+          $ vagrant plugin install sahara
         EOT
       end
+
+      $stderr.puts "HELLO FROM STDERR"
     end
 
     def redirect_stdstreams(stdout, stderr)
@@ -116,12 +118,12 @@ $ vagrant plugin install sahara
       chef_solo_config = vm.config.vm.provisioners.find { |p| p.name == :chef_solo }
 
       unless chef_solo_config
-        raise RuntimeError, <<-EOT
-VM '#{vm.name}' doesn't have a configured chef-solo provisioner, which is requied by Foodtaster to run specs on this VM.
-Please, add dummy chef-solo provisioner to your Vagrantfile, like this:
-config.vm.provision :chef_solo do |chef|
-  chef.cookbooks_path = %w[site-cookbooks]
-end
+        raise RuntimeError, <<-EOT.strip_heredoc
+          VM '#{vm.name}' doesn't have a configured chef-solo provisioner, which is requied by Foodtaster to run specs on this VM.
+          Please, add dummy chef-solo provisioner to your Vagrantfile, like this:
+          config.vm.provision :chef_solo do |chef|
+            chef.cookbooks_path = %w[site-cookbooks]
+          end
         EOT
       end
     end
