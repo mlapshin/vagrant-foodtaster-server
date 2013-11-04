@@ -38,11 +38,11 @@ $ vagrant plugin install sahara
                   provision_enabled: true)
       end
 
-      sahara = sahara_for(vm)
+      #sahara = sahara_for(vm)
 
-      unless sahara.is_snapshot_mode_on?
-        sahara.on
-      end
+      #unless sahara.is_snapshot_mode_on?
+      #  sahara.on
+      #end
     end
 
     def rollback_vm(vm_name)
@@ -109,7 +109,7 @@ $ vagrant plugin install sahara
     end
 
     def get_vm(vm_name)
-      @env.machine(vm_name, :virtualbox)
+      @env.machine(vm_name, :lxc)
     end
 
     def validate_vm!(vm)
