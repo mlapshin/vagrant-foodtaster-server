@@ -6,7 +6,7 @@ require 'vagrant-foodtaster-server/version'
 Gem::Specification.new do |gem|
   gem.name          = "vagrant-foodtaster-server"
   gem.version       = VagrantFoodtasterServer::VERSION
-  gem.authors       = ["Mike Lapshin"]
+  gem.authors       = ["Mike Lapshin", "Serzh Nechyporchuk"]
   gem.email         = ["mikhail.a.lapshin@gmail.com"]
   gem.description   = %q{A Foodtaster DRb server.}
   gem.summary       = %q{Foodtaster is a tool for testing Chef cookbooks using RSpec and Vagrant. This plugin allows Foodtaster to interact with Vagrant via simple DRb protocol. }
