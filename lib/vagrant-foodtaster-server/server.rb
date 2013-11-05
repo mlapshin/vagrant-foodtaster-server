@@ -27,25 +27,26 @@ class VagrantFoodtasterServer
     end
 
     def prepare_vm(vm_name)
-      vm = get_vm(vm_name)
+      unless vm_prepared?(vm_name)
+        vm = get_vm(vm_name)
+        sahara = sahara_for(vm)
 
-      if vm.state.id.to_s != 'running'
-        chef_run_list = get_chef_solo_run_list(vm)
-        provision_types = [:shell, :puppet]
+        if vm.state.id.to_s != 'running'
+          chef_run_list = get_chef_solo_run_list(vm)
+          provision_types = [:shell, :puppet]
 
-        unless chef_run_list.empty?
-          provision_types << :chef_solo
+          unless chef_run_list.empty?
+            provision_types << :chef_solo
+          end
+
+          vm.action(:up,
+                    provision_types: provision_types,
+                    provision_enabled: true)
         end
 
-        vm.action(:up,
-                  provision_types: provision_types,
-                  provision_enabled: true)
-      end
-
-      sahara = sahara_for(vm)
-
-      unless sahara.is_snapshot_mode_on?
-        sahara.on
+        unless sahara.is_snapshot_mode_on?
+          sahara.on
+        end
       end
     end
 
@@ -63,6 +64,13 @@ class VagrantFoodtasterServer
 
     def vm_defined?(vm_name)
       @env.machine_names.include?(vm_name)
+    end
+
+    def vm_prepared?(vm_name)
+      vm = get_vm(vm_name)
+      sahara = sahara_for(vm)
+
+      vm.state.id.to_s == 'running' && sahara.is_snapshot_mode_on?
     end
 
     def run_chef_on_vm(vm_name, current_run_config)
