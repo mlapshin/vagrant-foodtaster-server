@@ -1,6 +1,8 @@
 class String
   def strip_heredoc
-    indent = scan(/^[ \t]*(?=\S)/).min.try(:size) || 0
+    min_indent = scan(/^[ \t]*(?=\S)/).min
+    indent = min_indent.nil? ? 0 : min_indent.size
+
     gsub(/^[ \t]{#{indent}}/, '')
   end
 end
