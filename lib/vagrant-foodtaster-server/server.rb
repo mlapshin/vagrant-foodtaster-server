@@ -26,28 +26,33 @@ class VagrantFoodtasterServer
       $stderr = stderr
     end
 
-    def prepare_vm(vm_name)
-      unless vm_prepared?(vm_name)
-        vm = get_vm(vm_name)
-        sahara = sahara_for(vm)
+    def make_initial_snapshot_on_vm(vm_name)
+      vm = get_vm(vm_name)
+      sahara_for(vm).on
+    end
 
-        if vm.state.id.to_s != 'running'
-          chef_run_list = get_chef_solo_run_list(vm)
-          provision_types = [:shell, :puppet]
+    def start_vm(vm_name)
+      vm = get_vm(vm_name)
+      chef_run_list = get_chef_solo_run_list(vm)
+      provision_types = [:shell, :puppet]
 
-          unless chef_run_list.empty?
-            provision_types << :chef_solo
-          end
-
-          vm.action(:up,
-                    provision_types: provision_types,
-                    provision_enabled: true)
-        end
-
-        unless sahara.is_snapshot_mode_on?
-          sahara.on
-        end
+      unless chef_run_list.empty?
+        provision_types << :chef_solo
       end
+
+      vm.action(:up,
+                provision_types: provision_types,
+                provision_enabled: true)
+    end
+
+    def vm_running?(vm_name)
+      vm = get_vm(vm_name)
+      vm.state.id.to_s == 'running'
+    end
+
+    def initial_snapshot_made_on_vm?(vm_name)
+      vm = get_vm(vm_name)
+      sahara_for(vm).is_snapshot_mode_on?
     end
 
     def rollback_vm(vm_name)
