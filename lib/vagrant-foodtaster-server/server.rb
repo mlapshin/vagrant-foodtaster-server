@@ -17,6 +17,10 @@ class VagrantFoodtasterServer
       end
     end
 
+    def version
+      VagrantFoodtasterServer::VERSION
+    end
+
     def redirect_stdstreams(stdout, stderr)
       $stdout = stdout
       $stderr = stderr
