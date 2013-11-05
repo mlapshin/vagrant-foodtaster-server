@@ -77,7 +77,7 @@ class VagrantFoodtasterServer
       begin
         provisioner.provision
       rescue Exception
-        raise RuntimeError, "Chef run failed!"
+        raise RuntimeError, "Chef Run failed on #{vm_name} with config #{current_run_config.inspect}"
       end
     end
 
