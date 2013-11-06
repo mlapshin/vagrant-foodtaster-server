@@ -5,7 +5,7 @@ require 'vagrant-foodtaster-server/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "vagrant-foodtaster-server"
-  gem.version       = VagrantFoodtasterServer::VERSION
+  gem.version       = Vagrant::Foodtaster::Server::VERSION
   gem.authors       = ["Mike Lapshin", "Serzh Nechyporchuk"]
   gem.email         = ["mikhail.a.lapshin@gmail.com"]
   gem.description   = %q{A Foodtaster DRb server.}

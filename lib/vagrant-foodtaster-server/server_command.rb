@@ -1,13 +1,15 @@
 require 'drb'
 require_relative 'server'
 
-class VagrantFoodtasterServer
+module Vagrant
+module Foodtaster
+module Server
   class ServerCommand < Vagrant.plugin(2, :command)
     def execute
       argv = parse_options
 
       port_number = argv.size == 0 ? 35672 : argv[0].to_i
-      DRb.start_service "druby://localhost:#{port_number}", VagrantFoodtasterServer::Server.new(@app, @env)
+      DRb.start_service "druby://localhost:#{port_number}", Vagrant::Foodtaster::Server::Server.new(@app, @env)
       DRb.thread.join
 
     rescue RuntimeError, Errno::EADDRINUSE => e
@@ -23,4 +25,6 @@ class VagrantFoodtasterServer
       @env.ui.error(error)
     end
   end
+end
+end
 end

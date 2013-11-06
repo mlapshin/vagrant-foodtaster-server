@@ -1,4 +1,6 @@
-class VagrantFoodtasterServer
+module Vagrant
+module Foodtaster
+module Server
   class Server
     def initialize(app, env)
       @env = env
@@ -18,7 +20,7 @@ class VagrantFoodtasterServer
     end
 
     def version
-      VagrantFoodtasterServer::VERSION
+      Vagrant::Foodtaster::Server::VERSION
     end
 
     def redirect_stdstreams(stdout, stderr)
@@ -156,4 +158,6 @@ class VagrantFoodtasterServer
       modified_config
     end
   end
+end
+end
 end
