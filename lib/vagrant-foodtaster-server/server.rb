@@ -75,6 +75,16 @@ class VagrantFoodtasterServer
       private_network_conf ? private_network_conf.last[:ip] : nil
     end
 
+    def put_file_to_vm(vm_name, local_fn, vm_fn)
+      vm = get_vm(vm_name)
+      vm.communicate.upload(local_fn, vm_fn)
+    end
+
+    def get_file_from_vm(vm_name, vm_fn, local_fn)
+      vm = get_vm(vm_name)
+      vm.communicate.download(vm_fn, local_fn)
+    end
+
     def vm_defined?(vm_name)
       @env.machine_names.include?(vm_name)
     end
