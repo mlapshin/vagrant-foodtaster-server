@@ -67,6 +67,14 @@ class VagrantFoodtasterServer
       vm.action(:halt)
     end
 
+    def vm_ip(vm_name)
+      vm = get_vm(vm_name)
+      networks = vm.config.vm.networks
+      private_network_conf = networks.find { |n| n.first == :private_network }
+
+      private_network_conf ? private_network_conf.last[:ip] : nil
+    end
+
     def vm_defined?(vm_name)
       @env.machine_names.include?(vm_name)
     end
@@ -93,8 +101,8 @@ class VagrantFoodtasterServer
 
       begin
         provisioner.provision
-      rescue Exception
-        raise RuntimeError, "Chef Run failed on #{vm_name} with config #{current_run_config.inspect}"
+      rescue StandardError => e
+        raise RuntimeError, "Chef Run failed on #{vm_name} with config #{current_run_config.inspect}.\n\nOriginal Exception was:\n#{e.class.name}\n#{e.message}"
       end
     end
 
