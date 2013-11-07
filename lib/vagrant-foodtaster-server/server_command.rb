@@ -14,6 +14,7 @@ module Server
 
     rescue RuntimeError, Errno::EADDRINUSE => e
       write_formatted_exception_message(e)
+      exit 1
     rescue Interrupt
       DRb.stop_service
     end

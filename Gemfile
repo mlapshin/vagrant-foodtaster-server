@@ -1,4 +1,12 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in vagrant-drb-server.gemspec
 gemspec
+
+group :development do
+  gem 'vagrant', github: 'mitchellh/vagrant', tag: 'v1.3.5'
+end
+
+group :test do
+  gem 'rspec'
+  gem 'foodtaster'
+end

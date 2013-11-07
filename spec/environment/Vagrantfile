@@ -1,0 +1,7 @@
+$LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
+Vagrant.require_plugin 'vagrant-foodtaster-server'
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "test"
+  config.vm.box_url = "test.box"
+end
