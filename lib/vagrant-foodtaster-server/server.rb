@@ -69,15 +69,26 @@ module Server
       vm.action(:halt)
     end
 
-    def vm_defined?(vm_name)
-      @env.machine_names.include?(vm_name)
+    def vm_ip(vm_name)
+      vm = get_vm(vm_name)
+      networks = vm.config.vm.networks
+      private_network_conf = networks.find { |n| n.first == :private_network }
+
+      private_network_conf ? private_network_conf.last[:ip] : nil
     end
 
-    def vm_prepared?(vm_name)
+    def put_file_to_vm(vm_name, local_fn, vm_fn)
       vm = get_vm(vm_name)
-      sahara = sahara_for(vm)
+      vm.communicate.upload(local_fn, vm_fn)
+    end
 
-      vm.state.id.to_s == 'running' && sahara.is_snapshot_mode_on?
+    def get_file_from_vm(vm_name, vm_fn, local_fn)
+      vm = get_vm(vm_name)
+      vm.communicate.download(vm_fn, local_fn)
+    end
+
+    def vm_defined?(vm_name)
+      @env.machine_names.include?(vm_name)
     end
 
     def run_chef_on_vm(vm_name, current_run_config)
@@ -95,8 +106,8 @@ module Server
 
       begin
         provisioner.provision
-      rescue Exception
-        raise RuntimeError, "Chef Run failed on #{vm_name} with config #{current_run_config.inspect}"
+      rescue StandardError => e
+        raise RuntimeError, "Chef Run failed on #{vm_name} with config #{current_run_config.inspect}.\n\nOriginal Exception was:\n#{e.class.name}\n#{e.message}"
       end
     end
 
