@@ -89,13 +89,6 @@ class VagrantFoodtasterServer
       @env.machine_names.include?(vm_name)
     end
 
-    def vm_prepared?(vm_name)
-      vm = get_vm(vm_name)
-      sahara = sahara_for(vm)
-
-      vm.state.id.to_s == 'running' && sahara.is_snapshot_mode_on?
-    end
-
     def run_chef_on_vm(vm_name, current_run_config)
       vm = get_vm(vm_name)
 
