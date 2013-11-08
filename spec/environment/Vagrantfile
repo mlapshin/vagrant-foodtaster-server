@@ -1,7 +1,10 @@
 $LOAD_PATH.unshift File.expand_path('../../../lib', __FILE__)
 Vagrant.require_plugin 'vagrant-foodtaster-server'
 
+SERVER_IP = '10.0.2.15'
+
 Vagrant.configure("2") do |config|
   config.vm.box = "test"
   config.vm.box_url = "test.box"
+  config.vm.network 'private_network', ip: SERVER_IP
 end

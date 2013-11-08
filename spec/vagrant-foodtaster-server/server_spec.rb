@@ -2,32 +2,29 @@ require 'spec_helper'
 require 'vagrant-foodtaster-server/server'
 
 describe Vagrant::Foodtaster::Server::Server do
-  require_vm :default
+  before(:each) do
+    start_server
+  end
+
+  after(:each) do
+    stop_server
+  end
 
   before(:each) do
-    default.rollback
+    execute('vagrant halt -f')
+    client.start_vm(:default)
   end
 
-
-  describe 'initialization' do
-    it 'should fail if sahara plugin is not installed' do
-      res = run_server_on(default)
-      res.should_not be_successful
-      res.stderr.should =~ /Cannot find `sahara' plugin/
-    end
+  it 'should start vm' do
+    client.vm_running?(:default).should be_true
   end
 
-  describe 'runtime' do
-    describe '#vm_running?' do
-      before(:each) do
-        execute_on(default, 'vagrant plugin install sahara')
-        run_server_on(default, daemon: true)
-      end
+  it 'should shutdown started vm' do
+    client.shutdown_vm(:default)
+    client.vm_running?(:default).should_not be_true
+  end
 
-      it 'should return true if vm is running' do
-        execute_on(default, 'vagrant up')
-        client.vm_running?(:default).should be_true
-      end
-    end
+  it 'should return ip for vm' do
+    #client.vm_ip(:default).should == SERVER_IP
   end
 end

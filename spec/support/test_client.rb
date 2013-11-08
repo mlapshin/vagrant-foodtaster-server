@@ -6,7 +6,7 @@ class TestClient
     @v = DRbObject.new_with_uri("druby://localhost:#{port}")
   end
 
-  [:vm_defined?, :rollback_vm,
+  [:vm_defined?, :rollback_vm, :vm_ip,
    :run_chef_on_vm, :execute_command_on_vm,
    :shutdown_vm, :vm_running?, :initial_snapshot_made_on_vm?,
    :start_vm, :make_initial_snapshot_on_vm].each do |method_name|
