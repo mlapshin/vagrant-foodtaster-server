@@ -8,12 +8,20 @@ module Vagrant
         def execute
           argv = parse_options
 
-          port_number = argv.size == 0 ? 35672 : argv[0].to_i
-          DRb.start_service "druby://localhost:#{port_number}", Vagrant::Foodtaster::Server::Server.new(@app, @env)
+          arg = argv.first
+          if arg && arg.include?(':')
+            host, port = arg.split(':')
+          else
+            port = arg
+          end
+          host ||= 'localhost'
+          port ||= 35672
+          DRb.start_service "druby://#{host}:#{port}", Vagrant::Foodtaster::Server::Server.new(@app, @env)
           DRb.thread.join
 
         rescue RuntimeError, Errno::EADDRINUSE => e
           write_formatted_exception_message(e)
+          exit 1
         rescue Interrupt
           DRb.stop_service
         end
