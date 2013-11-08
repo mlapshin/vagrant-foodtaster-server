@@ -8,18 +8,6 @@ describe Vagrant::Foodtaster::Server::Server do
     default.rollback
   end
 
-  def execute_on(vm, command)
-    vm.execute_as('vagrant', <<-BASH)
-      cd #{PROJECT_ROOT}/spec/environment && \
-      #{command}
-    BASH
-  end
-
-  def run_server_on(vm, opts={})
-    command = 'vagrant foodtaster-server'
-    command << ' &' if opts[:daemon]
-    execute_on(vm, command)
-  end
 
   describe 'initialization' do
     it 'should fail if sahara plugin is not installed' do
@@ -38,6 +26,7 @@ describe Vagrant::Foodtaster::Server::Server do
 
       it 'should return true if vm is running' do
         execute_on(default, 'vagrant up')
+        client.vm_running?(:default).should be_true
       end
     end
   end

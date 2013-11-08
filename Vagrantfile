@@ -1,10 +1,14 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/lib'
 require File.dirname(__FILE__) + '/lib/vagrant-foodtaster-server'
 PROJECT_ROOT = '/tmp/vagrant-foodtaster-server'
+SERVER_IP = '10.0.2.15'
+SERVER_PORT = 31415
 
 Vagrant.configure("2") do |config|
   config.vm.box = "precise"
   config.vm.box_url = "http://redmine.hospital-systems.com/vagrant-boxes/ubuntu1204.box"
+  config.vm.network 'forwarded_port', guest: SERVER_PORT, host: SERVER_PORT, auto_correct: true
+  config.vm.network 'private_network', ip: SERVER_IP
   config.vm.synced_folder File.dirname(__FILE__), PROJECT_ROOT, owner: 'vagrant', group: 'vagrant'
 
   #vagrant_package = 'vagrant_1.3.5_x86_64.deb'
