@@ -9,19 +9,13 @@ protocol.
 
 ## Installation
 
-First, install [sahara](http://github.com/jedi4ever/sahara/) plugin for snapshot support:
-
-    vagrant plugin install sahara
-
-Then, install Foodtaster Server:
-
     vagrant plugin install vagrant-foodtaster-server
 
 ## Usage
 
 To start server:
 
-    vagrant foodtaster-server
+    vagrant foodtaster-server [port number]
 
 To terminate press Ctrl+C.
 
