@@ -8,14 +8,7 @@ module Vagrant
         def execute
           argv = parse_options
 
-          arg = argv.first
-          if arg && arg.include?(':')
-            host, port = arg.split(':')
-          else
-            port = arg
-          end
-          host ||= 'localhost'
-          port ||= 35672
+          host, port = parse_args(argv.first)
           DRb.start_service "druby://#{host}:#{port}", Vagrant::Foodtaster::Server::Server.new(@app, @env)
           DRb.thread.join
 
@@ -31,6 +24,17 @@ module Vagrant
         def write_formatted_exception_message(e)
           error = "#{e.message}\n\nServer Error Backtrace:\n  #{e.backtrace.join("\n  ")}"
           @env.ui.error(error)
+        end
+
+        def parse_args(args)
+          host, port = if args && args.include?(':')
+                         args.split(':')
+                       else
+                          [nil, args]
+                       end
+          host ||= 'localhost'
+          port ||= 35672
+          [host, port]
         end
       end
     end

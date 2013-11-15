@@ -23,3 +23,6 @@ To terminate press Ctrl+C.
 
 *   only VirtualBox provider is supported
 *   only chef-solo provisioner is supported
+
+## Developing
+For developing and testing plugin, please, place any box with installed Chef to spec/environment/test.box.
