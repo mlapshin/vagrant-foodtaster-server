@@ -10,12 +10,12 @@ module Vagrant
             require 'sahara/session/virtualbox'
           rescue LoadError
             raise RuntimeError, <<-EOT.strip_heredoc
-          Cannot find `sahara' plugin. Please, make sure that `sahara' plugin is installed using command:
-          $ vagrant plugin list
+              Cannot find `sahara' plugin. Please, make sure that `sahara' plugin is installed using command:
+              $ vagrant plugin list
 
-          If `sahara' plugin is not installed, install it:
-          $ vagrant plugin install sahara
-        EOT
+              If `sahara' plugin is not installed, install it:
+              $ vagrant plugin install sahara
+            EOT
           end
         end
 
@@ -61,6 +61,14 @@ module Vagrant
           vm = get_vm(vm_name)
 
           sahara_for(vm).rollback
+
+          # wait for SSH connection
+          # workaround for MacOS issue
+          retry_number = 0
+          while !vm.communicate.ready? && retry_number < 20
+            sleep 0.5
+            retry_number += 1
+          end
         end
 
         def shutdown_vm(vm_name)
