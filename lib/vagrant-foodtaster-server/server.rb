@@ -155,12 +155,12 @@ module Vagrant
 
           unless chef_solo_config
             raise RuntimeError, <<-EOT.strip_heredoc
-          VM '#{vm.name}' doesn't have a configured chef-solo provisioner, which is requied by Foodtaster to run specs on this VM.
-          Please, add dummy chef-solo provisioner to your Vagrantfile, like this:
-          config.vm.provision :chef_solo do |chef|
-            chef.cookbooks_path = %w[site-cookbooks]
-          end
-        EOT
+              VM '#{vm.name}' doesn't have a configured chef-solo provisioner, which is requied by Foodtaster to run specs on this VM.
+              Please, add dummy chef-solo provisioner to your Vagrantfile, like this:
+              config.vm.provision :chef_solo do |chef|
+                chef.cookbooks_path = %w[site-cookbooks]
+              end
+            EOT
           end
         end
 
